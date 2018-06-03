@@ -1,0 +1,92 @@
+{
+  "name": "jsconf-eu-2018",
+  "version": "1.0.0",
+  "description": "Demo code for JSConf.eu 2018 talk",
+  "main": "./server",
+  "files": [
+    "server.js",
+    "lib/**/*.js",
+    "generated/**/*.js",
+    "static/**/*.css",
+    "static/**/*.js"
+  ],
+  "author": "@mikesamuel",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "colors": "1.1.2",
+    "cookie": "0.3.1",
+    "escape-html": "1.0.3",
+    "multiparty": "4.1.3",
+    "mv": "2.1.1",
+    "pug-runtime": "^2.0.4",
+    "serve-static": "1.13.2",
+    "sh-template-tag": "^2.0.2"
+  },
+  "scripts": {
+    "clean": "rm -rf generated uploads",
+    "cover": "istanbul cover _mocha",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls",
+    "diff": "diff -u lib/{broken,fixed}/index.js || true",
+    "gencode": "node ./scripts/gen-code.js",
+    "genlists": "mkdir -p generated && ( [ -f generated/prod-sources.json ] || echo '{}' > generated/prod-sources.json) && (./scripts/gen-import-graph.js generated/prod-sources || true)",
+    "lint": "./node_modules/.bin/standard && ./node_modules/.bin/eslint .",
+    "prepack": "npm run clean && npm run prestart",
+    "prestart": "npm run gencode && npm run genlists",
+    "visualization": "scripts/gen-pretty-graph.sh",
+    "start": "./scripts/start.sh",
+    "startonly": "./scripts/start.sh",
+    "test": "./test/run.js"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.15.0",
+    "eslint-config-standard": "*",
+    "eslint-config-strict": "*",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.1.0",
+    "mocha-lcov-reporter": "^1.3.0",
+    "pug": "^2.0.3",
+    "request": "^2.86.0",
+    "standard": "*"
+  },
+  "eslintConfig": {
+    "extends": [
+      "strict",
+      "standard"
+    ],
+    "rules": {
+      "id-blacklist": 0,
+      "id-length": 0,
+      "line-comment-position": 0,
+      "no-console": 0,
+      "no-inline-comments": 0,
+      "no-sync": 0,
+      "no-void": 0,
+      "no-magic-numbers": 0,
+      "no-warning-comments": 0,
+      "strict": 0
+    }
+  },
+  "mintable": {
+    "grants": {
+      "ShFragment": [
+        "sh-template-tag"
+      ],
+      "TrustedHtml": [
+        "./lib/fixed/trusted-template.js"
+      ]
+    }
+  },
+  "sensitiveModules": {
+    "child_process": [
+      "lib/fixed/exec-sh-fragment.js"
+    ],
+    "lib/fixed/trusted-template.js": [
+      "generated/calculate.js",
+      "generated/file-not-found.js",
+      "generated/index.js",
+      "generated/upload.js"
+    ]
+  }
+}
